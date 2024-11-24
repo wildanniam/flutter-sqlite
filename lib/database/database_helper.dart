@@ -16,15 +16,21 @@ class DatabaseHelper {
     await database.execute("""
       CREATE TABLE user(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nama_user TEXT NOT NULL
+        nama_user TEXT NOT NULL,
+        job TEXT NOT NULL,
+        usia INTEGER NOT NULL
       )
     """);
   }
 
   // Insert user
-  static Future<int> addUser(String namaUser) async {
+  static Future<int> addUser(String namaUser, String job, int usia) async {
     final db = await DatabaseHelper.db();
-    final data = {'nama_user': namaUser};
+    final data = {
+      'nama_user': namaUser,
+      'job': job,
+      'usia': usia,
+    };
     return await db.insert('user', data);
   }
 
@@ -32,5 +38,23 @@ class DatabaseHelper {
   static Future<List<Map<String, dynamic>>> getUsers() async {
     final db = await DatabaseHelper.db();
     return db.query('user', orderBy: 'id');
+  }
+
+  // Update user
+  static Future<int> updateUser(
+      int id, String namaUser, String job, int usia) async {
+    final db = await DatabaseHelper.db();
+    final data = {
+      'nama_user': namaUser,
+      'job': job,
+      'usia': usia,
+    };
+    return await db.update('user', data, where: 'id = ?', whereArgs: [id]);
+  }
+
+  // Delete user
+  static Future<void> deleteUser(int id) async {
+    final db = await DatabaseHelper.db();
+    await db.delete('user', where: 'id = ?', whereArgs: [id]);
   }
 }
